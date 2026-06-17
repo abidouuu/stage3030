@@ -52,7 +52,7 @@ class config:
             if b0 is None :
                 b0=10**random.uniform(-3, 1)
             if epsiloneq is None:
-                epsiloneq = random.choice([0.01,0.1])
+                epsiloneq = random.choice([-0.1,-0.01,0,0.01,0.1])
             if Lambda is None:
                 Lambda = random.choice([0.1,1])
             if kappaeq is None:

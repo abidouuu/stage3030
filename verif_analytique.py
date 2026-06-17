@@ -44,9 +44,9 @@ def verif_correct():
             B_dif=abs(B_final-B_eq)
             b_dif=abs(b_final-b_eq)
             if B_dif>tol or b_dif>tol : 
-                print("Non-convergence à la ", i, "-ème simulation !")
+                print("\nNon-convergence à la ", i, "-ème simulation !")
                 cfg.write_config_file()
                 cfg.plot_time(data, type="Bb", eq=True, show=False)
 
-verif_unique()
+#verif_unique()
 verif_correct()
