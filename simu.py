@@ -7,6 +7,7 @@ from math import sqrt
 import random
 from typing import Literal
 from tqdm import tqdm
+from itertools import product
 
 test=False
 
@@ -24,8 +25,8 @@ class config:
         epsiloneq=None,
         Lambda=None, 
         kappaeq=None,
-        thetaepsilon=None, 
-        thetakappa=None, 
+        tauepsilon=None, 
+        taukappa=None, 
         deltaepsilon=None,
         deltakappa=None, 
         inter_epsilon=None, 
@@ -57,14 +58,14 @@ class config:
                 Lambda = random.choice([0.1,1])
             if kappaeq is None:
                 kappaeq = random.choice([0.01,0.1,1])
-            if thetaepsilon  is None:
-                thetaepsilon = 10**random.uniform(-3, 2)
-            if thetakappa is None:
-                thetakappa = 10**random.uniform(-3, 2)
+            if tauepsilon  is None:
+                tauepsilon = random.choice([10**2,10**3,10**4])
+            if taukappa is None:
+                taukappa = random.choice([10**2,10**3,10**4])
             if deltaepsilon is None:
-                deltaepsilon = 10**random.uniform(1, 3)
+                deltaepsilon = random.choice([10**(-2),10**(-3),10**(-4)])
             if deltakappa is None:
-                deltakappa = 10**random.uniform(-3, -1)
+                deltakappa = random.choice([10**(-2),10**(-3),10**(-4)])
             if inter_epsilon is None : 
                 inter_epsilon=False
             if nu is None:
@@ -87,9 +88,9 @@ class config:
             self.Lambda=Lambda
             self.kappaeq=kappaeq
 
-            self.thetaepsilon=thetaepsilon
+            self.tauepsilon=tauepsilon
             self.deltaepsilon=deltaepsilon
-            self.thetakappa=thetakappa
+            self.taukappa=taukappa
             self.deltakappa=deltakappa
 
             self.inter_epsilon=inter_epsilon
@@ -99,8 +100,8 @@ class config:
             self.tfin=tfin
             self.term = term
             if term == 'short':
-                self.thetaepsilon = 0
-                self.thetakappa = 0
+                self.tauepsilon = 0
+                self.taukappa = 0
                 self.deltaespilon = 0
                 self.deltakappa = 0
                 self.nu = 0
@@ -162,8 +163,8 @@ class config:
             Lambda = {self.Lambda}
             kappaeq = {self.kappaeq}
 
-            thetaepsilon = {self.thetaepsilon}
-            thetakappa = {self.thetakappa}
+            tauepsilon = {self.tauepsilon}
+            taukappa = {self.taukappa}
             deltaepsilon = {self.deltaepsilon}
             deltakappa = {self.deltakappa}
 
@@ -281,7 +282,7 @@ class config:
         start = None
 
         for i, val in enumerate(B_minimas + [False]): 
-            if (val) and (start is None) and (t[i]>10/abs(self.epsiloneq)):
+            if (val) and (start is None) and (t[i]>10/max(abs(self.epsiloneq),0.01)):
                 start = i
             elif (not val) and (start is not None):
                 if ((t[i-1]-t[start])>200) :
@@ -302,11 +303,18 @@ class config:
             f.write(text)
 
 if test:
-    workdir = os.path.dirname(os.path.abspath(__file__))
-    datadir=os.path.join(workdir, "data/tests")
-    cfg=config(datadir=datadir, term='short', tfin=300)
-    data=cfg.run(save=True)
-    minimas=cfg.stat_analysis(data=data)
-    cfg.plot_time(data, type="Bb", eq=True, show=True, minimas=minimas)
-    cfg.write_stat_file(minimas=minimas)
+    taukappas=[1,10,100,1000,10000]
+    params=list(product(taukappas,taukappas))
+    for taukappa,tauepsilon in tqdm(params, desc="simu"):
+        workdir = os.path.dirname(os.path.abspath(__file__))
+        datadir=os.path.join(workdir, "data/tests")
+        cfg=config(datadir=datadir, term='mid', tfin=5000)
+        cfg.taukappa=taukappa
+        cfg.tauepsilon=tauepsilon
+        data=cfg.run(save=True)
+        minimas=cfg.stat_analysis(data=data)
+        cfg.plot_time(data, type="Bb", eq=True, show=False, minimas=minimas)
+        cfg.plot_time(data, type="kappa", show=False)
+        cfg.plot_time(data,type="epsilon", show=False)
+        cfg.write_stat_file(minimas=minimas)
     

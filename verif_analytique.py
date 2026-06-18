@@ -48,5 +48,5 @@ def verif_correct():
                 cfg.write_config_file()
                 cfg.plot_time(data, type="Bb", eq=True, show=False)
 
-#verif_unique()
+verif_unique()
 verif_correct()

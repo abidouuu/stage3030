@@ -50,8 +50,8 @@ dynamo::dynamo(int argc, char* argv[]) {
     Lambda = configfile.get<double>("Lambda");
     kappaeq = configfile.get<double>("kappaeq");
 
-    thetaepsilon = configfile.get<double>("thetaepsilon");
-    thetakappa = configfile.get<double>("thetakappa");
+    tauepsilon = configfile.get<double>("tauepsilon");
+    taukappa = configfile.get<double>("taukappa");
     deltaepsilon = configfile.get<double>("deltaepsilon");
     deltakappa = configfile.get<double>("deltakappa");
 
@@ -124,11 +124,11 @@ void dynamo::rk4(){
 }
 
 //évolution des paramètres stochastiques (ornstein-uhlenbeck)
-void dynamo::stochastic(double &X, double Xeq, double thetaX, double deltaX){
-    static normal_distribution<> N01(0.0, 1.0);
+void dynamo::stochastic(double &X, double Xeq, double tauX, double deltaX){
+    static normal_distribution<> N01(0.0, sqrt(dt)); // (moyene , déviation standard)
     static mt19937 gen(std::random_device{}());
-    double xi = N01(gen);
-    X += -thetaX * (X - Xeq) * dt + deltaX*sqrt(2*dt) * xi;
+    double dW = N01(gen);
+    X += -(1/tauX) * (X - Xeq) * dt + sqrt(deltaX) * dW;
 }
 
 //évolution de sigmaB (vents solaires)
@@ -145,9 +145,9 @@ void dynamo::short_step(){
 void dynamo::mid_step(){
     short_step();
     if (inter_epsilon) {
-        stochastic(epsilon, epsiloneq, thetaepsilon, deltaepsilon);
+        stochastic(epsilon, epsiloneq, tauepsilon, deltaepsilon);
     }
-    stochastic(kappa, kappaeq, thetakappa, deltakappa);
+    stochastic(kappa, kappaeq, taukappa, deltakappa);
 }
 
 //long terme

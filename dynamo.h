@@ -19,7 +19,7 @@ class dynamo{
         double B,b ; //champs magnétiques
 
         double epsilon, Lambda, kappa ; //paramètres fondamentaux
-        double thetaepsilon, thetakappa, deltaepsilon, deltakappa ; //paramètres d'intermittence
+        double tauepsilon, taukappa, deltaepsilon, deltakappa ; //paramètres d'intermittence
         bool inter_epsilon ; // faire varier epsilon ou non
         double nu ; //paramètre de rotation décélérée
 
