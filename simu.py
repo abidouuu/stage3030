@@ -61,11 +61,11 @@ class config:
             if tauepsilon  is None:
                 tauepsilon = random.choice([10**2,10**3,10**4])
             if taukappa is None:
-                taukappa = random.choice([10**2,10**3,10**4])
+                taukappa = random.choice([10**3,10**4,10**5])
             if deltaepsilon is None:
-                deltaepsilon = random.choice([10**(-2),10**(-3),10**(-4)])
+                deltaepsilon = random.choice([10**(-3),10**(-4),10**(-5)])
             if deltakappa is None:
-                deltakappa = random.choice([10**(-2),10**(-3),10**(-4)])
+                deltakappa = random.choice([10**(-3),10**(-4),10**(-5)])
             if inter_epsilon is None : 
                 inter_epsilon=False
             if nu is None:
