@@ -1,0 +1,1 @@
+# longues simulations (t~1e6) avec stochasticité

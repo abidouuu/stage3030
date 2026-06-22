@@ -32,7 +32,7 @@ class dynamo{
         vector<double> rhs(vector<double> v); //éq diff
         void rk4(); //évolution de b et B
         void stochastic(double &X, double X0, double thetaX, double deltaX); //évolution des paramètres stochastiques
-        void wind(); //évolution de sigmaB (vents solaires)
+        void skumanich(); //évolution de sigmaB (vents solaires)
 
         void short_step(); //évolution court terme
         void mid_step(); //évolution moyen terme

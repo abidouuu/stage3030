@@ -132,8 +132,9 @@ void dynamo::stochastic(double &X, double Xeq, double tauX, double deltaX){
 }
 
 //évolution de sigmaB (vents solaires)
-void dynamo::wind(){
-    epsilon -= nu*B*dt;
+void dynamo::skumanich(){
+    double n=0.5;
+    epsilon -= nu*(pow(t,(n+1)/2));
 }
 
 //court terme
@@ -153,7 +154,7 @@ void dynamo::mid_step(){
 //long terme
 void dynamo::long_step(){
     mid_step();
-    wind();
+    skumanich();
 }
 
 //évolution tout terme

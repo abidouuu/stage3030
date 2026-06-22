@@ -102,7 +102,7 @@ class config:
             if term == 'short':
                 self.tauepsilon = 0
                 self.taukappa = 0
-                self.deltaespilon = 0
+                self.deltaepsilon = 0
                 self.deltakappa = 0
                 self.nu = 0
             elif term == 'mid':
@@ -133,7 +133,6 @@ class config:
                 B_eq=sqrt((epsilon+kappa*x)/Lambda)
                 sol.append((B_eq,b_eq))
 
-        sol=[]
         if abs(c1)<tol : #pour éviter de diviser par 0 plus tard
                 if abs(c2)<tol : sol=landau()
                 else : 
@@ -303,18 +302,10 @@ class config:
             f.write(text)
 
 if test:
-    taukappas=[1,10,100,1000,10000]
-    params=list(product(taukappas,taukappas))
-    for taukappa,tauepsilon in tqdm(params, desc="simu"):
-        workdir = os.path.dirname(os.path.abspath(__file__))
-        datadir=os.path.join(workdir, "data/tests")
-        cfg=config(datadir=datadir, term='mid', tfin=5000)
-        cfg.taukappa=taukappa
-        cfg.tauepsilon=tauepsilon
-        data=cfg.run(save=True)
-        minimas=cfg.stat_analysis(data=data)
-        cfg.plot_time(data, type="Bb", eq=True, show=False, minimas=minimas)
-        cfg.plot_time(data, type="kappa", show=False)
-        cfg.plot_time(data,type="epsilon", show=False)
-        cfg.write_stat_file(minimas=minimas)
-    
+    workdir = os.path.dirname(os.path.abspath(__file__))
+    datadir=os.path.join(workdir, "data/tests")
+    cfg=config(datadir=datadir, term='long', tfin=50000)
+    data=cfg.run(save=True)
+    cfg.nu=1e-6
+    cfg.plot_time(data, type='epsilon', show=True)
+    cfg.plot_time(data, type='Bb', show=True)

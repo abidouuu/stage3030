@@ -28,6 +28,11 @@ def simu_intermittence():
         cfg=config(datadir=datadir, term='mid', epsiloneq=epsilon, 
                 Lambda=Lambda,kappaeq=kappa, inter_epsilon=inter_epsilon,
                 tfin=100000)
+        
+        (B_eq,b_eq)=cfg.get_eq()[0]
+        cfg.B0=B_eq
+        cfg.b0=b_eq  
+
         data=cfg.run(save=True)
         cfg.write_config_file()
         minimas=cfg.stat_analysis(data)
