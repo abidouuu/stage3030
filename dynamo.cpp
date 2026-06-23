@@ -55,6 +55,7 @@ dynamo::dynamo(int argc, char* argv[]) {
     deltaepsilon = configfile.get<double>("deltaepsilon");
     deltakappa = configfile.get<double>("deltakappa");
 
+    inter_kappa = configfile.get<bool>("inter_kappa");
     inter_epsilon = configfile.get<bool>("inter_epsilon");
 
     term = configfile.get<string>("term");
@@ -87,12 +88,9 @@ void dynamo::printout(bool force){
         if (outputfile->is_open()) {
             if (term=="short"){
                 *outputfile << t << " " << B << " " << b << endl;
-            } else if (inter_epsilon){
+            } else{
                 *outputfile << t << " " << B << " " << b << " " << kappa 
                 << " " << epsilon << endl;
-            }else {
-                *outputfile << t << " " << B << " " << b << " " << kappa 
-                << endl;
             }
         }
     }
@@ -148,7 +146,9 @@ void dynamo::mid_step(){
     if (inter_epsilon) {
         stochastic(epsilon, epsiloneq, tauepsilon, deltaepsilon);
     }
-    stochastic(kappa, kappaeq, taukappa, deltakappa);
+    if (inter_kappa){
+        stochastic(kappa, kappaeq, taukappa, deltakappa);
+    }
 }
 
 //long terme
@@ -184,7 +184,10 @@ void dynamo::run(){
 
     if (term=="short") {run_step(&dynamo::short_step);}
     if (term=="mid") {run_step(&dynamo::mid_step);}
-    if (term=="long") {run_step(&dynamo::long_step);}
+    if (term=="long") {
+        epsilon=5;
+        run_step(&dynamo::long_step);
+    }
 
     printout(true);
 }

@@ -1,8 +1,3 @@
-- commencer à voir comment accéder à un ordinateur plus puissant avec du stockage... pas eu le temps de faire bcp de simulations avec intermittence
-- quelles figures / tableaux sortir pour l'analyse statistique ? fréquence (comme 3030), mais histogramme est-il vraiment utile ? il faudrait 
-développer un quantificateur 
-- rotation : force-t-on la loi de skumanitch pendant toute la simulation ? si l'objectif est d'observer la déviation de cette loi à la 
-criticalité mieux ne vaut pas
-- veut-on vraiment faire varier stochastiquement epsilon ? 1) ça semble incompatible avec la partie skumanich et 2) c'est peut-être mieux pour 
-la clarté de l'article de ne faire varier que kappa, c'est ça qui est crucial. la variation de epsilon ne fait que modifier le 
-threshold de criticalité, ça n'ajoute pas grand chose
+- différents mécanismes d'intermittence : faire varier kappa, sigma, ou les deux.
+- statistiques : calcul de fréquence, durée moyenne, déviation standard. plot fréquence/durée normalisée
+- skumanich : voir comment varie la fréquence dans le temps, analyser comment varie B avec vitesse angulaire ; peut-on justifier B \propto \Omega

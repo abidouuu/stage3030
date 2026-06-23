@@ -29,6 +29,7 @@ class config:
         taukappa=None, 
         deltaepsilon=None,
         deltakappa=None, 
+        inter_kappa=None,
         inter_epsilon=None, 
         nu=None,
         dt=0.01,
@@ -66,8 +67,10 @@ class config:
                 deltaepsilon = random.choice([10**(-3),10**(-4),10**(-5)])
             if deltakappa is None:
                 deltakappa = random.choice([10**(-3),10**(-4),10**(-5)])
+            if inter_kappa is None :
+                inter_kappa=True
             if inter_epsilon is None : 
-                inter_epsilon=False
+                inter_epsilon=True
             if nu is None:
                 nu = 10**random.uniform(-6, -3)
             if simu_title is None :
@@ -93,7 +96,9 @@ class config:
             self.taukappa=taukappa
             self.deltakappa=deltakappa
 
+            self.inter_kappa=inter_kappa
             self.inter_epsilon=inter_epsilon
+
             self.nu=nu
 
             self.dt=dt
@@ -167,7 +172,8 @@ class config:
             deltaepsilon = {self.deltaepsilon}
             deltakappa = {self.deltakappa}
 
-            inter_espilon = {self.inter_epsilon}
+            inter_kappa = {'true' if self.inter_kappa else 'false'}
+            inter_epsilon = {'true' if self.inter_epsilon else 'false'}
 
             term = {self.term}
 
@@ -274,6 +280,7 @@ class config:
         B = data[:, 1]
         eq=self.get_eq()
         (B_eq,b_eq)=eq[0]
+        if B_eq==0 : B_eq=max(B)
         threshold=0.1*B_eq
         B_minimas=[x<threshold for x in B]
 
@@ -290,6 +297,32 @@ class config:
                 else : start = None
         
         return minimas
+    
+    def plot_histograms(self,minimas_list,differentfolder=None, show=False, name=None):
+        fig, ax = plt.subplots(figsize=(10,5))
+        fig.tight_layout()
+
+        for minimas in minimas_list : 
+            lengths = [duree for (_, duree) in minimas]
+            ax.hist(lengths, bins=max(10,round(len(lengths)/10)))
+        
+        ax.set_xlabel("Lenghts")
+        ax.set_ylabel("Frenquency")
+        ax.legend(fontsize=8)
+
+        try:
+            os.makedirs(self.folder, exist_ok=True)
+        except Exception:
+            pass
+        if differentfolder is None :
+            if name is None : savefile = os.path.join(self.folder, f"plot_minimas.png")
+            else : savefile = os.path.join(self.folder, name)
+        else : 
+            if name is None : savefile = os.path.join(differentfolder, f"plot_minimas.png")
+            else : savefile = os.path.join(differentfolder, name)
+        plt.savefig(savefile)
+        if show : plt.show()
+        plt.close(fig)
 
     def write_stat_file(self,minimas,differentfile=None):
         text = f"{'No.':<5}{'Centre':<15}{'Durée':<15}"
@@ -301,11 +334,43 @@ class config:
         with open(target_file, "w", encoding="utf-8") as f:
             f.write(text)
 
+import numpy as np
+
+def read_output(outputfile):
+    data = np.genfromtxt(outputfile)
+    if data.ndim == 1:
+        data = data.reshape(1, -1)
+    return data
+
+def read_minimas(minimasfile):
+    minimas = []
+
+    with open(minimasfile, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    for line in lines[1:]:
+        parts = line.split()
+
+        if len(parts) >= 3:
+            _, centre, duree = parts[:3]
+            minimas.append((float(centre), float(duree)))
+
+    return minimas
+
 if test:
     workdir = os.path.dirname(os.path.abspath(__file__))
     datadir=os.path.join(workdir, "data/tests")
-    cfg=config(datadir=datadir, term='long', tfin=50000)
+    cfg=config(datadir=datadir, term='mid', tfin=50000)
+    cfg.taukappa=10000
+    cfg.deltakappa=cfg.kappaeq*1e-3
+    cfg.tauepsilon=10000
+    cfg.deltaepsilon=max(1e-5,abs(cfg.epsiloneq*1e-3))
     data=cfg.run(save=True)
-    cfg.nu=1e-6
+    minimas=cfg.stat_analysis(data)
+    minimas_list=[minimas]
+    cfg.plot_time(data, type='Bb', show=True,minimas=minimas)
     cfg.plot_time(data, type='epsilon', show=True)
-    cfg.plot_time(data, type='Bb', show=True)
+    cfg.plot_time(data, type='kappa', show=True)
+    cfg.write_stat_file(minimas)
+    cfg.plot_histograms(minimas_list=minimas_list,show=True)
+    

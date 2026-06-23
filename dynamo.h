@@ -20,7 +20,7 @@ class dynamo{
 
         double epsilon, Lambda, kappa ; //paramètres fondamentaux
         double tauepsilon, taukappa, deltaepsilon, deltakappa ; //paramètres d'intermittence
-        bool inter_epsilon ; // faire varier epsilon ou non
+        bool inter_kappa, inter_epsilon ; // faire varier epsilon/kappa ou non
         double nu ; //paramètre de rotation décélérée
 
         string term ; //"long", "mid", "short"
